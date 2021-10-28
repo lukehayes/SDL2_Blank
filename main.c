@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include "Game.h"
 
 int main(int argc, char *argv[])
 {
@@ -40,9 +41,14 @@ int main(int argc, char *argv[])
             }
         } // End Event Checks
 
+
+        update(1.0f);
+
+
         SDL_RenderClear(renderer);
 
         // Render here!
+        render();
 
         SDL_RenderPresent(renderer);
     }
