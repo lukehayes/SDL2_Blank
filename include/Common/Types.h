@@ -1,5 +1,5 @@
-#ifndef LH_TYPES_H
-#define LH_TYPES_H
+#ifndef COMMON_TYPES_H
+#define COMMON_TYPES_H
 
 #include <SDL2/SDL.h>
 
@@ -25,5 +25,5 @@ using const_str =       const char*;
 // Template Typedefs
 ============================================================*/
 
-#endif
+#endif // COMMON_TYPES_H
 
