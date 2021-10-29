@@ -1,6 +1,7 @@
+CXX := gcc
 CXXFLAGS := -Iinclude
 ENTRY := main.c
-LDFLAGS := -lSDL2
+LDFLAGS := -lSDL2 -lm
 BIN := -o bin/app
 #SRCDIR := src
 #SOURCES := $(SRCDIR)/Window.cpp
