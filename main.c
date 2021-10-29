@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "Game.h"
+#include "Common/Log.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,63 +30,61 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int running = 1;
+    int MS_PER_UPDATE = 16; // 60 FPS
+    double previous = SDL_GetTicks();
+    double delta = 0.0;
+    double lag = 0.0;
 
+    SDL_Rect r = {100,100,100,100};
 
-    static double limitFPS = 1.0 / 60.0;
-    double lastTime = SDL_GetPerformanceCounter(), timer = lastTime;
-    double deltaTime = 0, nowTime = 0;
-    int frames = 0 , updates = 0;
+    float c = 0.0;
 
-    // - While window is alive
-    while (true)
+    while (running)
     {
+        c += 0.01;
+        double current = SDL_GetTicks();
+        double elapsed = current - previous;
+        delta = lag / MS_PER_UPDATE;
+        previous = current;
+        lag += elapsed;
+
         /* Poll for and process events */
         SDL_Event event;
         if (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_q)
             {
-                // End the loop.
+                /*SDL_Quit();*/
                 break;
+                // End the loop.
             }
         } // End Event Checks
 
-        // - Measure time
-        nowTime = SDL_GetPerformanceCounter();
-        deltaTime += (nowTime - lastTime) / limitFPS;
-        lastTime = nowTime;
-
-        // - Only update at 60 frames / s
-        while (deltaTime >= 1.0){
-            //update();   // - Update function
-
-            updates++;
-            deltaTime--;
+        while (lag >= MS_PER_UPDATE)
+        {
+            update(delta);
+            lag -= MS_PER_UPDATE;
         }
 
-        // - Render at maximum possible frames
+        r.x = cos(c) * 100.0;
+        r.y = sin(c) * 100.0;
 
         SDL_RenderClear(renderer);
-        //render(); // - Render function
+        SDL_SetRenderDrawColor(renderer, 0,100,200,100);
+        SDL_RenderFillRect(renderer, &r);
+
+        SDL_SetRenderDrawColor(renderer, 0,0,0,100);
+        render();
         SDL_RenderPresent(renderer);
-
-
-        frames++;
-
-
-        // - Reset after one second
-        if (SDL_GetPerformanceCounter() - timer > 1.0) {
-            timer ++;
-            printf("FPS: %i. Updates: %i \n", frames, updates);
-            updates = 0, frames = 0;
-        }
-
     }
-}
 
-SDL_DestroyRenderer(renderer);
-SDL_DestroyWindow(window);
-SDL_Quit();
 
-return 0;
+
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
 }
