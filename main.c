@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "Game.h"
 
 int main(int argc, char *argv[])
@@ -29,8 +30,16 @@ int main(int argc, char *argv[])
     }
 
 
+
+    static double limitFPS = 1.0 / 60.0;
+    double lastTime = SDL_GetPerformanceCounter(), timer = lastTime;
+    double deltaTime = 0, nowTime = 0;
+    int frames = 0 , updates = 0;
+
+    // - While window is alive
     while (true)
     {
+        /* Poll for and process events */
         SDL_Event event;
         if (SDL_PollEvent(&event))
         {
@@ -41,21 +50,42 @@ int main(int argc, char *argv[])
             }
         } // End Event Checks
 
+        // - Measure time
+        nowTime = SDL_GetPerformanceCounter();
+        deltaTime += (nowTime - lastTime) / limitFPS;
+        lastTime = nowTime;
 
-        update(1.0f);
+        // - Only update at 60 frames / s
+        while (deltaTime >= 1.0){
+            //update();   // - Update function
 
+            updates++;
+            deltaTime--;
+        }
+
+        // - Render at maximum possible frames
 
         SDL_RenderClear(renderer);
-
-        // Render here!
-        render();
-
+        //render(); // - Render function
         SDL_RenderPresent(renderer);
+
+
+        frames++;
+
+
+        // - Reset after one second
+        if (SDL_GetPerformanceCounter() - timer > 1.0) {
+            timer ++;
+            printf("FPS: %i. Updates: %i \n", frames, updates);
+            updates = 0, frames = 0;
+        }
+
     }
+}
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+SDL_DestroyRenderer(renderer);
+SDL_DestroyWindow(window);
+SDL_Quit();
 
-    return 0;
+return 0;
 }
