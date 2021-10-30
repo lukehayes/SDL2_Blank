@@ -32,22 +32,22 @@ int main(int argc, char *argv[])
 
     int running = 1;
     int MS_PER_UPDATE = 16; // 60 FPS
-    double previous = SDL_GetTicks();
+    double now = SDL_GetTicks();
+    double oldTime = SDL_GetTicks();
     double delta = 0.0;
-    double lag = 0.0;
+    float c = 0.0;
 
     SDL_Rect r = {100,100,100,100};
 
-    float c = 0.0;
+    float x = 0.0f;
+    float y = 0.0f;
 
     while (running)
     {
+        now = SDL_GetTicks();
+        delta = now - oldTime;
+        LSD("Delta", delta / 1000.0f);
         c += 0.01;
-        double current = SDL_GetTicks();
-        double elapsed = current - previous;
-        delta = lag / MS_PER_UPDATE;
-        previous = current;
-        lag += elapsed;
 
         /* Poll for and process events */
         SDL_Event event;
@@ -61,14 +61,18 @@ int main(int argc, char *argv[])
             }
         } // End Event Checks
 
-        while (lag >= MS_PER_UPDATE)
-        {
-            update(delta);
-            lag -= MS_PER_UPDATE;
+        /*while (lag >= MS_PER_UPDATE)*/
+        /*{*/
+            /*update(delta);*/
+            /*lag -= MS_PER_UPDATE;*/
+        /*}*/
+
+        for (int i = 0; i < 1000; i++) {
+            int a = 2;
+            a = a * a;
         }
 
-        r.x = cos(c) * 100.0;
-        r.y = sin(c) * 100.0;
+        float speed = 0.01f;
 
         SDL_RenderClear(renderer);
         SDL_SetRenderDrawColor(renderer, 0,100,200,100);
@@ -77,6 +81,9 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(renderer, 0,0,0,100);
         render();
         SDL_RenderPresent(renderer);
+
+        oldTime = now;
+
     }
 
 
