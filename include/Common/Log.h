@@ -61,4 +61,19 @@ void LSI(str s, s32 i)
     printf("Log: %s -> %i \n", s,i);
 }
 
+
+/**
+ * Log a string and an integer to the command line.
+ *
+ * @param char* s
+ *
+ * @param int i
+ *
+ * @return void
+ */
+void LSD(str s, f64 d)
+{
+    printf("Log: %s -> %f \n", s,d);
+}
+
 #endif
