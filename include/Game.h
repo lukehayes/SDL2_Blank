@@ -1,15 +1,25 @@
 #ifndef GAME_H
 #define GAME_H
 
+/**
+ * Nice place to store time related information.
+ */
+typedef struct
+{
+    double currentTime;
+    double previousTime;
+    double delta;
+    float MS_PER_UPDATE;
+
+} TimeInfo;
+
+
 void update(float dt)
 {
-    printf("Delta: %f \n", dt);
 }
-
 
 void render()
 {
-    printf("Rendering \n");
 }
 
 void processInput()
