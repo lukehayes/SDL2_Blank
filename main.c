@@ -30,23 +30,25 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    TimeInfo time;
+    time.currentTime = SDL_GetTicks();
+    time.previousTime = 0;
+    time.delta = 0;
+    time.MS_PER_UPDATE = 0.15f;
+
     int running = 1;
-    int MS_PER_UPDATE = 16; // 60 FPS
-    double now = SDL_GetTicks();
-    double oldTime = SDL_GetTicks();
-    double delta = 0.0;
     float c = 0.0;
 
-    SDL_Rect r = {100,100,100,100};
+    SDL_Rect r = {10,10,10,10};
 
     float x = 0.0f;
     float y = 0.0f;
 
     while (running)
     {
-        now = SDL_GetTicks();
-        delta = now - oldTime;
-        LSD("Delta", delta / 1000.0f);
+        time.previousTime = time.currentTime;
+        time.currentTime = SDL_GetTicks();
+        time.delta = time.currentTime - time.previousTime;
         c += 0.01;
 
         /* Poll for and process events */
@@ -55,39 +57,24 @@ int main(int argc, char *argv[])
         {
             if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_q)
             {
-                /*SDL_Quit();*/
+                SDL_Quit();
                 break;
                 // End the loop.
             }
         } // End Event Checks
 
-        /*while (lag >= MS_PER_UPDATE)*/
-        /*{*/
-            /*update(delta);*/
-            /*lag -= MS_PER_UPDATE;*/
-        /*}*/
-
-        for (int i = 0; i < 1000; i++) {
-            int a = 2;
-            a = a * a;
+        if(time.delta > time.MS_PER_UPDATE)
+        {
+            time.delta = time.MS_PER_UPDATE;
         }
 
-        float speed = 0.01f;
+        update(time.delta);
 
         SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer, 0,100,200,100);
-        SDL_RenderFillRect(renderer, &r);
 
-        SDL_SetRenderDrawColor(renderer, 0,0,0,100);
         render();
         SDL_RenderPresent(renderer);
-
-        oldTime = now;
-
     }
-
-
-
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
